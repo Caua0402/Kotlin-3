@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "955521121810",
+    "project_id": "upload-ds3m-caua",
+    "storage_bucket": "upload-ds3m-caua.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955521121810:android:fcf3b428977e3ece04a2cb",
+        "android_client_info": {
+          "package_name": "br.senai.sp.jandira.uplod_do_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBq6oLXHC5SUFpIWkMlD4C-rK-jPu9c8iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
