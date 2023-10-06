@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.uplod_do_firebase
 
 import android.app.ActivityManager
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -69,6 +70,11 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        //Trata o evento de click no botao
+        binding.showAllBtn.setOnClickListener{
+            startActivity(Intent(this, ImagesFeed::class.java))
+        }
+
     }
 
 
@@ -76,25 +82,65 @@ class MainActivity : AppCompatActivity() {
 
     //FUNÇÃO DE UPLOD
     private fun uplodImage() {
+//
+//        binding.progressBar.visibility = View.VISIBLE
+//
+//        //DEFINA UM NOME UNICO PARA IMAGEM COM USO DE UM VALOR TIMESTAMP
+//        storageRef = storageRef.child(System.currentTimeMillis().toString())
+//
+//        //EXECUTA O PROCESSO DE UPLOAD DA IMAGEM
+//        imageUri?.let {
+//            storageRef.putFile(it).addOnCompleteListener{
+//                task ->
+//                        if (task.isSuccessful){
+//                            Toast.makeText(this, "UPLOAD CONCLUIDO", Toast.LENGTH_LONG).show()
+//                        } else {
+//                            Toast.makeText(this, "ERRO AO REALIZAR O UPLOAD", Toast.LENGTH_LONG).show()
+//                        }
+//            }
+//        }
+//
+//        binding.progressBar.visibility = View.GONE
 
-        binding.progressBar.visibility = View.VISIBLE
-
-        //DEFINA UM NOME UNICO PARA IMAGEM COM USO DE UM VALOR TIMESTAMP
-        storageRef = storageRef.child(System.currentTimeMillis().toString())
-
-        //EXECUTA O PROCESSO DE UPLOAD DA IMAGEM
+        ///// PROCESSO DE UPLOAD - V2 /////
         imageUri?.let {
-            storageRef.putFile(it).addOnCompleteListener{
-                task ->
-                        if (task.isSuccessful){
-                            Toast.makeText(this, "UPLOAD CONCLUIDO", Toast.LENGTH_LONG).show()
-                        } else {
-                            Toast.makeText(this, "ERRO AO REALIZAR O UPLOAD", Toast.LENGTH_LONG).show()
+            storageRef.putFile(it).addOnCompleteListener { task->
+
+                if (task.isSuccessful) {
+
+                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+
+                        val map = HashMap<String, Any>()
+                        map["pic"] = uri.toString()
+
+                        firebaseStore.collection("images").add(map).addOnCompleteListener { firestoreTask ->
+
+                            if (firestoreTask.isSuccessful){
+                                Toast.makeText(this, "Uploaded Successfully", Toast.LENGTH_SHORT).show()
+
+                            }else{
+                                Toast.makeText(this, firestoreTask.exception?.message, Toast.LENGTH_SHORT).show()
+
+                            }
+                            binding.progressBar.visibility = View.GONE
+                            binding.imageView.setImageResource(R.drawable.upload)
+
                         }
+                    }
+
+                }else{
+
+                    Toast.makeText(this,  task.exception?.message, Toast.LENGTH_SHORT).show()
+
+                }
+
+                //BARRA DE PROGRESSO DO UPLOAD
+                binding.progressBar.visibility = View.GONE
+
+                //TROCA A IMAGEM PARA A IMAGEM PADRÃO
+                binding.imageView.setImageResource(R.drawable.upload)
+
             }
-        }
-
-        binding.progressBar.visibility = View.GONE
     }
-
+}
 }
